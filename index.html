@@ -333,7 +333,7 @@
       }
       
       // Load and play new audio from GitHub repository
-      const audioFile = `https://raw.githubusercontent.com/imorton-shr/materialscientists/main/${id}-${currentLanguage}.mp3`;
+     const audioFile = `./${id}-${currentLanguage}.mp3`;
       currentAudio = new Audio(audioFile);
       currentAudio.play().catch(() => {
         console.log("Missing audio:", audioFile);
@@ -341,12 +341,22 @@
     }
 
     function stopAudio() {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-        currentAudio = null;
-      }
-    }
+  if (currentAudio) {
+
+    // pause playback
+    currentAudio.pause();
+
+    // reset time
+    currentAudio.currentTime = 0;
+
+    // 🔥 fully unload audio
+    currentAudio.src = "";
+    currentAudio.load();
+
+    // clear variable
+    currentAudio = null;
+  }
+}
 
     function updateImages() {
       const stephanieImg = document.getElementById("stephanie-img");
