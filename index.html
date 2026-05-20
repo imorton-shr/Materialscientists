@@ -333,7 +333,7 @@
       }
       
       // Load and play new audio from GitHub repository
-      const audioFile = `https://raw.githubusercontent.com/imorton-shr/materialscientists/main/audio/${id}-${currentLanguage}.mp3`;
+      const audioFile = `https://raw.githubusercontent.com/imorton-shr/materialscientists/main/${id}-${currentLanguage}.mp3`;
       currentAudio = new Audio(audioFile);
       currentAudio.play().catch(() => {
         console.log("Missing audio:", audioFile);
