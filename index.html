@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Material Scientists</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;family=Noto+Sans+Thai&amp;family=Noto+Sans+SC&amp;family=Noto+Sans+JP&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Fredoka', 'Noto Sans Thai', 'Noto Sans SC', 'Noto Sans JP', sans-serif; }
+    
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes bounce-in {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    @keyframes wave {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(20deg); }
+      75% { transform: rotate(-20deg); }
+    }
+    
+    @keyframes flip {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(180deg); }
+    }
+    
+    .star {
+      animation: twinkle 2s ease-in-out infinite;
+    }
+    
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .bounce-in {
+      animation: bounce-in 0.5s ease-out forwards;
+    }
+    
+    .wave-hand {
+      animation: wave 1s ease-in-out infinite;
+      display: inline-block;
+    }
+    
+    .question-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .question-card:hover {
+      transform: scale(1.02);
+    }
+    
+    .answer-box {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease, padding 0.3s ease;
+    }
+    
+    .answer-box.open {
+      max-height: 800px;
+      padding: 16px;
+    }
+    
+    .nav-btn {
+      transition: all 0.2s ease;
+    }
+    
+    .nav-btn:hover {
+      transform: translateY(-3px);
+    }
+    
+    .nav-btn.active {
+      transform: scale(1.1);
+    }
+
+    .language-btn {
+      transition: all 0.2s ease;
+    }
+
+    .language-btn.active {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    
+    .game-card {
+      perspective: 1000px;
+      cursor: pointer;
+      height: 120px;
+    }
+    
+    .game-card.matched {
+      opacity: 0.5;
+      cursor: default;
+    }
+    
+    .game-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    
+    .game-card.flipped .game-card-inner {
+      transform: rotateY(180deg);
+    }
+    
+    .game-card-front, .game-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1rem;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    
+    .game-card-front {
+      background: linear-gradient(135deg, #c084fc 0%, #f472b6 100%);
+      color: white;
+    }
+    
+    .game-card-back {
+      transform: rotateY(180deg);
+      background: white;
+      border: 2px solid #e9d5ff;
+      color: #7c3aed;
+      font-size: 1rem;
+      padding: 1rem;
+      text-align: center;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto">
+  <div id="app-wrapper" class="min-h-full w-full bg-gradient-to-b from-purple-100 via-pink-100 to-blue-100 relative"><!-- Stars Background -->
+   <div class="fixed inset-0 pointer-events-none overflow-hidden">
+    <div class="star absolute w-2 h-2 bg-purple-400 rounded-full top-[5%] left-[10%]" style="animation-delay: 0s;"></div>
+    <div class="star absolute w-1 h-1 bg-pink-300 rounded-full top-[15%] left-[25%]" style="animation-delay: 0.5s;"></div>
+    <div class="star absolute w-2 h-2 bg-purple-300 rounded-full top-[8%] left-[45%]" style="animation-delay: 1s;"></div>
+    <div class="star absolute w-1 h-1 bg-blue-300 rounded-full top-[20%] left-[60%]" style="animation-delay: 1.5s;"></div>
+    <div class="star absolute w-2 h-2 bg-pink-400 rounded-full top-[12%] left-[80%]" style="animation-delay: 0.3s;"></div>
+    <div class="star absolute w-1 h-1 bg-purple-400 rounded-full top-[25%] left-[90%]" style="animation-delay: 0.8s;"></div>
+   </div><!-- Main Content -->
+   <div class="relative z-10 p-4 md:p-8 max-w-4xl mx-auto"><!-- Header -->
+    <header class="text-center mb-8">
+     <h1 id="main-title" class="text-4xl md:text-5xl font-bold text-purple-600 mb-2 drop-shadow-lg" data-en="🔬 Material Scientists 🧪" data-th="🔬 นักวิทยาศาสตร์วัสดุ 🧪" data-ch="🔬 材料科学家 🧪" data-ja="🔬 材料科学者 🧪">🔬 Material Scientists 🧪</h1>
+     <p id="welcome-message" class="text-xl text-pink-600"><span class="wave-hand">👋</span> <span data-en="Meet the brilliant inventors who changed the world!" data-th="มารู้จักนักประดิษฐ์ที่เปลี่ยนโลก!" data-ch="认识改变世界的天才发明家！" data-ja="世界を変えた天才発明家に会いましょう！">Meet the brilliant inventors who changed the world!</span></p>
+    </header><!-- Language Selection -->
+    <div class="flex flex-wrap justify-center gap-2 mb-6"><button onclick="setLanguage('en')" class="language-btn active bg-gradient-to-r from-blue-300 to-blue-400 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg hover:shadow-lg transition-all" data-lang="en">🇬🇧 English</button> <button onclick="setLanguage('th')" class="language-btn bg-gradient-to-r from-red-300 to-red-400 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg hover:shadow-lg transition-all" data-lang="th">🇹🇭 Thai</button> <button onclick="setLanguage('ch')" class="language-btn bg-gradient-to-r from-yellow-300 to-yellow-400 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg hover:shadow-lg transition-all" data-lang="ch">🇨🇳 中文</button> <button onclick="setLanguage('ja')" class="language-btn bg-gradient-to-r from-pink-300 to-pink-400 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg hover:shadow-lg transition-all" data-lang="ja">🇯🇵 日本語</button>
+    </div><!-- Main Content Area -->
+    <main id="content-area"><!-- Home Page -->
+     <section id="home-page">
+      <div class="grid gap-5 md:grid-cols-2"><!-- Stephanie Card -->
+       <div class="question-card bg-gradient-to-br from-pink-300/50 to-rose-300/50 rounded-3xl p-6 border-2 border-pink-300/50 cursor-pointer" onclick="goToPage('kwolek')">
+        <img id="stephanie-img" src="" alt="Stephanie Kwolek" loading="lazy" class="w-full h-80 object-cover rounded-2xl mb-4 hidden" onerror="console.error('Image failed to load:', this.src); this.style.background='#f9a8d4'; this.alt='Image unavailable';">
+        <div class="text-6xl mb-4 floating" id="stephanie-emoji">
+         🧵
+        </div>
+        <h2 class="text-3xl font-bold text-white mb-2">Stephanie Kwolek</h2>
+        <p class="text-pink-600 mb-4" data-en="Inventor of Kevlar - an incredibly strong fiber!" data-th="ผู้ประดิษฐ์เคฟลาร์ - เส้นใยที่แข็งแรงอย่างไม่น่าเชื่อ!" data-ch="凯夫拉发明者 - 一种难以置信的强纤维！" data-ja="ケブラーの発明者 - 信じられないほど強い繊維！">Inventor of Kevlar - an incredibly strong fiber!</p><button class="w-full bg-gradient-to-r from-pink-400 to-rose-400 text-white px-4 py-2 rounded-full font-bold hover:shadow-lg shadow-md transition-all" data-en="Learn More →" data-th="เรียนรู้เพิ่มเติม →" data-ch="了解更多 →" data-ja="詳しく知る →">Learn More →</button>
+       </div><!-- Charles Card -->
+       <div class="question-card bg-gradient-to-br from-blue-300/50 to-cyan-300/50 rounded-3xl p-6 border-2 border-blue-300/50 cursor-pointer" onclick="goToPage('macintosh')">
+        <img id="charles-img" src="" alt="Charles Macintosh" loading="lazy" class="w-full h-80 object-cover rounded-2xl mb-4 hidden" onerror="console.error('Image failed to load:', this.src); this.style.background='#a5e3ff'; this.alt='Image unavailable';">
+        <div class="text-6xl mb-4 floating" id="charles-emoji">
+         ☔
+        </div>
+        <h2 class="text-3xl font-bold text-white mb-2">Charles Macintosh</h2>
+        <p class="text-blue-600 mb-4" data-en="Creator of waterproof raincoats!" data-th="ผู้สร้างเสื้อกันฝนกันน้ำ!" data-ch="防水雨衣的创造者！" data-ja="防水レインコートの創造者！">Creator of waterproof raincoats!</p><button class="w-full bg-gradient-to-r from-blue-400 to-cyan-400 text-white px-4 py-2 rounded-full font-bold hover:shadow-lg shadow-md transition-all" data-en="Learn More →" data-th="เรียนรู้เพิ่มเติม →" data-ch="了解更多 →" data-ja="詳しく知る →">Learn More →</button>
+       </div>
+      </div><!-- Fun Facts Section -->
+      <section class="mt-10 bg-white/60 backdrop-blur-sm rounded-3xl p-6 border-2 border-purple-200/50">
+       <h2 class="text-3xl font-bold text-purple-600 mb-6 text-center" data-en="Quick Facts" data-th="ข้อเท็จจริงด่วน" data-ch="快速事实" data-ja="クイック事実">Quick Facts</h2>
+       <div class="grid gap-4 md:grid-cols-2">
+        <div class="question-card bg-gradient-to-r from-amber-200/60 to-yellow-200/60 rounded-2xl p-4" onclick="toggleAnswer(this); playAudio('fact-scientist')">
+         <h3 class="text-lg font-bold text-amber-700 flex items-center gap-2"><span>🧬</span> <span data-en="What is a Material Scientist?" data-th="นักวิทยาศาสตร์วัสดุคืออะไร?" data-ch="什么是材料科学家？" data-ja="材料科学者とは？">What is a Material Scientist?</span></h3>
+         <div class="answer-box bg-white/80 rounded-xl mt-2 text-gray-800" onmouseleave="stopAudio()">
+          <p class="text-sm" data-en="A material scientist studies how things are made! They test rubber, cloth, metal, and fibers to make them stronger, safer, or better. They're like super scientists with superpowers! 🦸" data-th="นักวิทยาศาสตร์วัสดุศึกษาวิธีการทำสิ่งต่างๆ! พวกเขาทดสอบยาง ผ้า โลหะ และเส้นใย เพื่อให้แข็งแรง ปลอดภัย หรือดีขึ้น พวกเขาเหมือนนักวิทยาศาสตร์ซูเปอร์พร้อมพลังเหนือธรรมชาติ! 🦸" data-ch="材料科学家研究事物是如何制造的！他们测试橡胶、布料、金属和纤维，使其更强、更安全或更好。他们就像拥有超级能力的超级科学家！🦸" data-ja="材料科学者は物がどのように作られるかを研究します！彼らはゴム、布、金属、繊維をテストして、より強く、安全に、または改善します。彼らはスーパーパワーを持つスーパー科学者のようなものです！🦸">A material scientist studies how things are made! They test rubber, cloth, metal, and fibers to make them stronger, safer, or better. They're like super scientists with superpowers! 🦸</p>
+         </div>
+        </div>
+        <div class="question-card bg-gradient-to-r from-cyan-200/60 to-blue-200/60 rounded-2xl p-4" onclick="toggleAnswer(this); playAudio('fact-importance')">
+         <h3 class="text-lg font-bold text-cyan-700 flex items-center gap-2"><span>💡</span> <span data-en="Why are they important?" data-th="ทำไมพวกเขาถึงสำคัญ?" data-ch="他们为什么很重要？" data-ja="なぜ彼らが大切なのか？">Why are they important?</span></h3>
+         <div class="answer-box bg-white/80 rounded-xl mt-2 text-gray-800" onmouseleave="stopAudio()">
+          <p class="text-sm" data-en="They invented things we use EVERY DAY! Waterproof jackets, strong fibers for safety gear, better tires... Without material scientists, life would be very different! 🌍" data-th="พวกเขาประดิษฐ์สิ่งที่เราใช้ทุกวัน! เสื้อกันน้ำ เส้นใยแข็งแรงสำหรับอุปกรณ์ป้องกัน ยางที่ดีขึ้น... หากไม่มีนักวิทยาศาสตร์วัสดุ ชีวิตจะแตกต่างมาก! 🌍" data-ch="他们发明了我们每天使用的东西！防水夹克、安全装备用的强纤维、更好的轮胎......没有材料科学家，生活会非常不同！🌍" data-ja="彼らは毎日使うものを発明しました！防水ジャケット、安全装備用の強い繊維、より良いタイヤ...材料科学者がいなければ、人生は非常に異なるでしょう！🌍">They invented things we use EVERY DAY! Waterproof jackets, strong fibers for safety gear, better tires... Without material scientists, life would be very different! 🌍</p>
+         </div>
+        </div>
+       </div>
+      </section>
+     </section><!-- Stephanie Detail Page (hidden initially) -->
+     <section id="stephanie-page" class="hidden" onmouseenter="playAudio('name-stephanie')"><button onclick="goBackHome()" class="mb-6 bg-gradient-to-r from-gray-600 to-gray-700 text-white px-5 py-3 rounded-full font-bold hover:shadow-lg shadow-md transition-all" data-en="← Back Home" data-th="← กลับหน้าแรก" data-ch="← 返回主页" data-ja="← ホームに戻る">← Back Home</button>
+      <div class="bg-gradient-to-br from-pink-600/40 to-rose-600/40 rounded-3xl p-8 border-2 border-pink-400/30 mb-6">
+       <div class="text-7xl text-center mb-4 floating">
+        🧵
+       </div>
+       <h1 class="text-4xl font-bold text-white text-center mb-2">Stephanie Kwolek</h1>
+       <p class="text-pink-200 text-center text-lg" data-en="The Inventor of Kevlar: One of the Strongest Materials Ever Created!" data-th="ผู้ประดิษฐ์เคฟลาร์: หนึ่งในวัสดุที่แข็งแรงที่สุดที่สร้างขึ้นมา!" data-ch="凯夫拉的发明者：有史以来最强的材料之一！" data-ja="ケブラーの発明者：これまでに作られた最も強い材料の1つ！">The Inventor of Kevlar: One of the Strongest Materials Ever Created!</p>
+      </div>
+      <div class="space-y-4">
+       <div class="question-card bg-gradient-to-r from-pink-600/40 to-rose-600/40 rounded-2xl p-5 border border-pink-300/50" onclick="toggleAnswer(this); playAudio('kevlar-what')">
+        <h3 class="text-3xl font-bold text-white flex items-center gap-2"><span class="text-4xl">🔬</span> <span data-en="What is Kevlar?" data-th="เคฟลาร์คืออะไร?" data-ch="什么是凯夫拉？" data-ja="ケブラーとは何ですか？">What is Kevlar?</span></h3>
+        <div class="answer-box bg-white/10 rounded-xl text-white" onmouseleave="stopAudio()">
+         <p class="text-lg mb-3" data-en="Kevlar is a super-strong fiber that Stephanie invented in 1965! It's made from special molecules arranged in a perfect way." data-th="เคฟลาร์เป็นเส้นใยที่แข็งแรงมากที่สเตฟานีประดิษฐ์ในปี พ.ศ. 2508! มันทำจากโมเลกุลพิเศษที่จัดเรียงได้อย่างสมบูรณ์แบบ" data-ch="凯夫拉是斯蒂芬妮在1965年发明的超强纤维！它由特殊分子以完美的方式排列而成。" data-ja="ケブラーはステファニーが1965年に発明した超強力な繊維です！特殊な分子が完璧な方法で配列されて作られています。">Kevlar is a super-strong fiber that Stephanie invented in 1965! It's made from special molecules arranged in a perfect way.</p>
+         <p class="text-lg mb-3" data-en="Here's the amazing part: Kevlar is about 5 TIMES STRONGER than steel! But it's also lightweight, so it's perfect for protection gear!" data-th="นี่คือส่วนที่น่าอัศจรรย์: เคฟลาร์แข็งแรงกว่าเหล็กถึง 5 เท่า! แต่มันเบาด้วย ดังนั้นมันจึงเหมาะสำหรับอุปกรณ์ป้องกัน!" data-ch="这是了不起的部分：凯夫拉的强度是钢的5倍！但它也很轻，所以非常适合防护装备！" data-ja="ここが素晴らしい部分です：ケブラーは鋼の5倍強いです！しかし、それは軽量でもあるため、保護装備に最適です！">Here's the amazing part: Kevlar is about 5 TIMES STRONGER than steel! But it's also lightweight, so it's perfect for protection gear!</p>
+         <div class="bg-white/20 rounded-lg p-3 mt-2 flex items-center gap-2 text-lg">
+          <span class="text-3xl">💪</span> <span data-en="Steel vs Kevlar: Steel is strong but HEAVY. Kevlar is just as strong but LIGHT!" data-th="เหล็กเทียบกับเคฟลาร์: เหล็กแข็งแรง แต่หนัก เคฟลาร์แข็งแรงเท่ากันแต่เบา!" data-ch="钢 vs 凯夫拉：钢很坚固但很重。凯夫拉同样坚固但很轻！" data-ja="スチールVSケブラー：スチールは強いですが重いです。ケブラーは同じくらい強いですが軽いです！">Steel vs Kevlar: Steel is strong but HEAVY. Kevlar is just as strong but LIGHT!</span>
+         </div>
+        </div>
+       </div>
+       <div class="question-card bg-gradient-to-r from-orange-600/40 to-amber-600/40 rounded-2xl p-5 border border-orange-300/50" onclick="toggleAnswer(this); playAudio('kevlar-uses')">
+        <h3 class="text-3xl font-bold text-white flex items-center gap-2"><span class="text-4xl">🦺</span> <span data-en="How is Kevlar Used?" data-th="เคฟลาร์ใช้อย่างไร?" data-ch="凯夫拉如何使用？" data-ja="ケブラーはどのように使用されますか？">How is Kevlar Used?</span></h3>
+        <div class="answer-box bg-white/10 rounded-xl text-white" onmouseleave="stopAudio()">
+         <p class="text-lg mb-4" data-en="Stephanie's invention protects people every single day! Here are amazing uses:" data-th="การประดิษฐ์ของสเตฟานีปกป้องผู้คนทุกวัน! นี่คือการใช้งานที่น่าอัศจรรย์:" data-ch="斯蒂芬妮的发明每天都在保护人们！这是令人惊叹的用途：" data-ja="ステファニーの発明は毎日人々を保護しています！これは素晴らしい使い方です：">Stephanie's invention protects people every single day! Here are amazing uses:</p>
+         <ul class="space-y-3">
+          <li class="flex items-start gap-3 bg-white/10 rounded-lg p-3"><span class="text-3xl mt-1">👮</span>
+           <div>
+            <strong class="text-cyan-300" data-en="Police Vests" data-th="เสื้อคุ้มกันของตำรวจ" data-ch="警察背心" data-ja="警察のベスト">Police Vests</strong> - <span data-en="Protect officers from bullets!" data-th="ปกป้องเจ้าหน้าที่จากกระสุน!" data-ch="保护警察免受子弹！" data-ja="警察官を銃弾から保護します！">Protect officers from bullets!</span>
+           </div></li>
+          <li class="flex items-start gap-3 bg-white/10 rounded-lg p-3"><span class="text-3xl mt-1">🚒</span>
+           <div>
+            <strong class="text-red-300" data-en="Firefighter Suits" data-th="ชุดนักดับเพลิง" data-ch="消防员套装" data-ja="消防士のスーツ">Firefighter Suits</strong> - <span data-en="Keep firefighters safe from extreme heat!" data-th="ป้องกันนักดับเพลิงจากความร้อนสูงสุด!" data-ch="让消防员远离极端高温！" data-ja="消防士を極端な熱から守ります！">Keep firefighters safe from extreme heat!</span>
+           </div></li>
+          <li class="flex items-start gap-3 bg-white/10 rounded-lg p-3"><span class="text-3xl mt-1">✈️</span>
+           <div>
+            <strong class="text-sky-300" data-en="Airplane Parts" data-th="ชิ้นส่วนเครื่องบิน" data-ch="飞机零件" data-ja="飛行機の部品">Airplane Parts</strong> - <span data-en="Makes planes lighter and stronger!" data-th="ทำให้เครื่องบินเบาและแข็งแรง!" data-ch="让飞机更轻更强！" data-ja="飛行機をより軽く、より強くします！">Makes planes lighter and stronger!</span>
+           </div></li>
+          <li class="flex items-start gap-3 bg-white/10 rounded-lg p-3"><span class="text-3xl mt-1">🎾</span>
+           <div>
+            <strong class="text-yellow-300" data-en="Sports Gear" data-th="อุปกรณ์กีฬา" data-ch="体育用品" data-ja="スポーツ用品">Sports Gear</strong> - <span data-en="Tennis rackets, bike parts, and more!" data-th="ไม้เทนนิส ชิ้นส่วนจักรยาน และอื่น ๆ!" data-ch="网球拍、自行车零件等！" data-ja="テニスラケット、自転車部品など！">Tennis rackets, bike parts, and more!</span>
+           </div></li>
+         </ul>
+        </div>
+       </div>
+       <div class="question-card bg-gradient-to-r from-green-600/40 to-emerald-600/40 rounded-2xl p-5 border border-green-300/50" onclick="toggleAnswer(this); playAudio('kevlar-accidental')">
+        <h3 class="text-3xl font-bold text-white flex items-center gap-2"><span class="text-4xl">⭐</span> <span data-en="The Accidental Discovery" data-th="การค้นพบโดยบังเอิญ" data-ch="意外的发现" data-ja="偶然の発見">The Accidental Discovery</span></h3>
+        <div class="answer-box bg-white/10 rounded-xl text-white" onmouseleave="stopAudio()">
+         <p class="text-lg mb-3" data-en="Here's something SUPER cool: Stephanie didn't plan to invent Kevlar! 😲" data-th="นี่คือสิ่งที่เจ๋งมาก: สเตฟานีไม่ได้วางแผนจะประดิษฐ์เคฟลาร์! 😲" data-ch="这有一些超级酷的东西：斯蒂芬妮没有计划发明凯夫拉！😲" data-ja="ここに超クールなことがあります：ステファニーはケブラーの発明を計画していませんでした！😲">Here's something SUPER cool: Stephanie didn't plan to invent Kevlar! 😲</p>
+         <p class="text-lg mb-2" data-en="In 1965, she was working at DuPont (a big chemical company) mixing chemicals together. She was trying to make something else, but she created Kevlar by accident!" data-th="ในปี พ.ศ. 2508 เธออยู่ที่ DuPont (บริษัทเคมีใหญ่) ผสมสารเคมีเข้าด้วยกัน เธอพยายามสร้างสิ่งอื่น แต่เธอสร้างเคฟลาร์โดยบังเอิญ!" data-ch="1965年，她在杜邦（一家大型化学公司）工作，混合化学物质。她试图制造别的东西，但她意外地创造了凯夫拉！" data-ja="1965年、彼女はDuPont（大規模な化学会社）で化学物質を混ぜていました。彼女は別のものを作ろうとしていましたが、偶然ケブラーを作成しました！">In 1965, she was working at DuPont (a big chemical company) mixing chemicals together. She was trying to make something else, but she created Kevlar by accident!</p>
+         <div class="bg-white/20 rounded-lg p-3 flex items-center gap-2 text-lg">
+          <span class="text-3xl">💡</span> <span data-en="Sometimes the best discoveries come from accidents! This is why scientists keep experimenting!" data-th="บางครั้งการค้นพบที่ดีที่สุดมาจากอุบัติเหตุ! นี่คือเหตุผลที่นักวิทยาศาสตร์ยังคงทดลอง!" data-ch="有时最好的发现来自意外！这就是科学家继续实验的原因！" data-ja="時々最良の発見は事故から生まれます！これが科学者が実験し続ける理由です！">Sometimes the best discoveries come from accidents! This is why scientists keep experimenting!</span>
+         </div>
+        </div>
+       </div>
+       <div class="question-card bg-gradient-to-r from-purple-600/40 to-indigo-600/40 rounded-2xl p-5 border border-purple-300/50" onclick="toggleAnswer(this); playAudio('stephanie-story')">
+        <h3 class="text-3xl font-bold text-white flex items-center gap-2"><span class="text-4xl">👩‍🔬</span> <span data-en="Stephanie's Story" data-th="เรื่องราวของสเตฟานี" data-ch="斯蒂芬妮的故事" data-ja="ステファニーの物語">Stephanie's Story</span></h3>
+        <div class="answer-box bg-white/10 rounded-xl text-white" onmouseleave="stopAudio()">
+         <p class="text-lg mb-3" data-en="Born in 1923, Stephanie studied chemistry and worked at DuPont. Her curiosity and passion for solving problems led to the discovery of Kevlar - an invention that saves thousands of lives every year!" data-th="เกิดในปี ค.ศ. 1923 สเตฟานีศึกษาเคมีและทำงานที่ DuPont ความอยากรู้และความหลงใหลของเธอในการแก้ปัญหานำไปสู่การค้นพบเคฟลาร์ - การประดิษฐ์ที่ช่วยชีวิตนับพันชีวิตทุกปี!" data-ch="1923年出生，斯蒂芬妮学习化学并在杜邦工作。她的好奇心和解决问题的热情导致了凯夫拉的发现——一项每年拯救数千人生命的发明！" data-ja="1923年生まれ、ステファニーは化学を勉強し、デュポンで働きました。彼女の好奇心と問題を解決したいという情熱は、ケブラーの発見につながりました-毎年数千人の命を救う発明です！">Born in 1923, Stephanie studied chemistry and worked at DuPont. Her curiosity and passion for solving problems led to the discovery of Kevlar - an invention that saves thousands of lives every year!</p>
+         <ul class="space-y-2 text-base">
+          <li class="flex items-center gap-2"><span class="text-2xl">🌟</span> <span data-en="Curiosity can change the world!" data-th="ความอยากรู้สามารถเปลี่ยนโลก!" data-ch="好奇心可以改变世界！" data-ja="好奇心は世界を変えることができます！">Curiosity can change the world!</span></li>
+          <li class="flex items-center gap-2"><span class="text-2xl">💪</span> <span data-en="Your inventions can help millions!" data-th="การประดิษฐ์ของคุณสามารถช่วยผู้คนนับล้านคน!" data-ch="你的发明可以帮助数百万人！" data-ja="あなたの発明は何百万人もの人々を助けることができます！">Your inventions can help millions!</span></li>
+         </ul>
+        </div>
+       </div>
+      </div>
+     </section><!-- Charles Detail Page (hidden initially) -->
+     <section id="charles-page" class="hidden" onmouseenter="playAudio('name-charles')"><button onclick="goBackHome()" class="mb-6 bg-gradient-to-r from-gray-600 to-gray-700 text-white px-5 py-3 rounded-full font-bold hover:shadow-lg shadow-md transition-all" data-en="← Back Home" data-th="← กลับหน้าแรก" data-ch="← 返回主页" data-ja="← ホームに戻る">← Back Home</button>
+      <div class="bg-gradient-to-br from-sky-600/40 to-blue-600/40 rounded-3xl p-8 border-2 border-sky-400/30 mb-6">
+       <div class="text-7xl text-center mb-4 floating">
+        ☔
+       </div>
+       <h1 class="text-4xl font-bold text-white text-center mb-2">Charles Macintosh</h1>
+       <p class="text-sky-200 text-center text-lg" data-en="The Inventor of Waterproof Fabric: Keeping People Dry for Over 200 Years!" data-th="ผู้ประดิษฐ์ผ้ากันน้ำ: ทำให้ผู้คนแห้งเป็นเวลากว่า 200 ปี!" data-ch="防水织物的发明者：让人们保持干燥超过200年！" data-ja="防水生地の発明者：200年以上人々を乾いたままにしています！">The Inventor of Waterproof Fabric: Keeping People Dry for Over 200 Years!</p>
+      </div>
+      <div class="space-y-4">
+       <div class="question-card bg-gradient-to-r from-blue-600/40 to-cyan-600/40 rounded-2xl p-5 border border-blue-300/50" onclick="toggleAnswer(this); playAudio('macintosh-problem')">
+        <h3 class="text-3xl font-bold text-white flex items-center gap-2"><span class="text-4xl">🌧️</span> <span data-en="The Problem He Solved" data-th="ปัญหาที่เขาแก้ไข" data-ch="他解决的问题" data-ja="彼が解決した問題">The Problem He Solved</span></h3>
+        <div class="answer-box bg-white/10 rounded-xl text-white" onmouseleave="stopAudio()">
+         <p class="text-lg mb-3" data-en="Before Charles invented waterproof fabric in 1824, people had a HUGE problem: when it rained, they got completely soaked!" data-th="ก่อนที่ชาร์ลส์จะประดิษฐ์ผ้ากันน้ำในปี ค.ศ. 1824 ผู้คนมีปัญหาใหญ่: เมื่อฝนตก พวกเขาถูกน้ำท่วมอย่างสมบูรณ์!" data-ch="在查尔斯于1824年发明防水织物之前，人们有一个巨大的问题：下雨时，他们会完全被淋湿！" data-ja="チャールズが1824年に防水生地を発明する前に、人々は大きな問題を抱えていました：雨が降ると、彼らは完全に濡れてしまいました！">Before Charles invented waterproof fabric in 1824, people had a HUGE problem: when it rained, they got completely soaked!</p>
+         <p class="text-lg" data-en="Regular cloth couldn't keep water out. People needed something clever to stay dry!" data-th="ผ้าธรรมชาติไม่สามารถป้องกันน้ำออกได้ ผู้คนต้องการสิ่งที่ชาญฉลาดเพื่อให้แห้ง!" data-ch="普通织物无法防止水渗入。人们需要聪明的东西来保持干燥！" data-ja="通常の布は水を防ぐことができませんでした。人々は乾いていられるために巧妙な何かが必要でした！">Regular cloth couldn't keep water out. People needed something clever to stay dry!</p>
+        </div>
+       </div>
+       <div class="question-card bg-gradient-to-r from-cyan-600/40 to-teal-600/40 rounded-2xl p-5 border border-cyan-300/50" onclick="toggleAnswer(this); playAudio('macintosh-solution')">
+        <h3 class="text-3xl font-bold text-white flex items-center gap-2"><span class="text-4xl">💡</span> <span data-en="The Clever Solution" data-th="วิธีแก้ปัญหาที่ชาญฉลาด" data-ch="聪明的解决方案" data-ja="賢い解決策">The Clever Solution</span></h3>
+        <div class="answer-box bg-white/10 rounded-xl text-white" onmouseleave="stopAudio()">
+         <p class="text-lg mb-3" data-en="Charles had a brilliant idea: coat cloth with rubber! He discovered that rubber could seal cloth and block water." data-th="ชาร์ลส์มีแนวคิดที่ยอดเยี่ยม: เคลือบผ้าด้วยยาง! เขาค้นพบว่ายางสามารถปิดผ้าและขัดกั้นน้ำได้" data-ch="查尔斯有一个绝妙的想法：用橡胶涂布布料！他发现橡胶可以密封布料并阻止水进入。" data-ja="チャールズは素晴らしいアイデアを持っていました：ゴムでコートを塗る！彼はゴムが布をシールして水をブロックできることを発見しました。">Charles had a brilliant idea: coat cloth with rubber! He discovered that rubber could seal cloth and block water.</p>
+         <div class="bg-white/20 rounded-lg p-3 flex items-center gap-2 text-lg">
+          <span class="text-3xl">⭐</span> <span data-en="Rubber-coated cloth = waterproof raincoat! A simple but genius solution!" data-th="ผ้าเคลือบยาง = เสื้อกันฝนกันน้ำ! วิธีแก้ปัญหาที่เรียบง่ายแต่เป็นอ천천ี!" data-ch="橡胶涂层布 = 防水雨衣！简单但天才的解决方案！" data-ja="ゴム被覆布 = 防水レインコート！シンプルだが天才的なソリューション！">Rubber-coated cloth = waterproof raincoat! A simple but genius solution!</span>
+         </div>
+        </div>
+       </div>
+       <div class="question-card bg-gradient-to-r from-teal-600/40 to-green-600/40 rounded-2xl p-5 border border-teal-300/50" onclick="toggleAnswer(this); playAudio('macintosh-raincoat')">
+        <h3 class="text-3xl font-bold text-white flex items-center gap-2"><span class="text-4xl">🧥</span> <span data-en="The Macintosh Raincoat" data-th="เสื้อกันฝนแมคอินทอช" data-ch="麦金托什雨衣" data-ja="マッキントッシュレインコート">The Macintosh Raincoat</span></h3>
+        <div class="answer-box bg-white/10 rounded-xl text-white" onmouseleave="stopAudio()">
+         <p class="text-lg mb-3" data-en="Charles's waterproof fabric creation became known as the 'Macintosh' raincoat - named after him! It revolutionized fashion and protection." data-th="การสร้างผ้ากันน้ำของชาร์ลส์เป็นที่รู้จักในชื่อ 'แมคอินทอช' เสื้อกันฝน - ตั้งชื่อตามชื่อของเขา! มันเปลี่ยนแปลงแฟชั่นและการป้องกัน" data-ch="查尔斯的防水织物创作被称为" 麦金托什雨衣——以他的名字命名！它彻底改变了时尚和保护。 data-ja="チャールズの防水生地の作成は「マッキントッシュ」レインコートとして知られるようになりました-彼の名前にちなんで名付けられました！それはファッションと保護を革命化しました。">Charles's waterproof fabric creation became known as the 'Macintosh' raincoat - named after him! It revolutionized fashion and protection.</p>
+         <p class="text-lg mb-2" data-en="Over 200 years later, people still wear Macintosh raincoats! His invention is still used today - that's how good it was!" data-th="กว่า 200 ปีต่อมา ผู้คนยังคงสวมเสื้อกันฝนแมคอินทอช! การประดิษฐ์ของเขายังใช้ได้ในปัจจุบัน - นั่นคือวิธีการที่ดี!" data-ch="200多年后，人们仍然穿着麦金托什雨衣！他的发明至今仍在使用——这就是它有多好！" data-ja="200年以上後、人々はまだマッキントッシュレインコートを着ています！彼の発明は今日でも使われています-それがどれだけ良かったかです！">Over 200 years later, people still wear Macintosh raincoats! His invention is still used today - that's how good it was!</p>
+        </div>
+       </div>
+       <div class="question-card bg-gradient-to-r from-indigo-600/40 to-purple-600/40 rounded-2xl p-5 border border-indigo-300/50" onclick="toggleAnswer(this); playAudio('charles-story')">
+        <h3 class="text-3xl font-bold text-white flex items-center gap-2"><span class="text-4xl">👨‍🔬</span> <span data-en="Charles Macintosh the Scientist" data-th="ชาร์ลส์ แมคอินทอช นักวิทยาศาสตร์" data-ch="科学家查尔斯·麦金托什" data-ja="科学者チャールズ・マッキントッシュ">Charles Macintosh the Scientist</span></h3>
+        <div class="answer-box bg-white/10 rounded-xl text-white" onmouseleave="stopAudio()">
+         <p class="text-lg mb-3" data-en="Charles was a brilliant chemist born in Glasgow, Scotland in 1766. He experimented with different materials to solve real-world problems." data-th="ชาร์ลส์เป็นนักเคมีที่ยอดเยี่ยมเกิดในกลาสโกว์ สกอตแลนด์ ในปี ค.ศ. 1766 เขาทดลองใช้วัสดุที่แตกต่างเพื่อแก้ปัญหาในโลกจริง" data-ch="查尔斯是一位杰出的化学家，1766年出生于苏格兰格拉斯哥。他用不同的材料进行实验来解决实际问题。" data-ja="チャールズは1766年にスコットランドのグラスゴーで生まれた優れた化学者でした。彼は実際の問題を解決するために異なる材料を実験しました。">Charles was a brilliant chemist born in Glasgow, Scotland in 1766. He experimented with different materials to solve real-world problems.</p>
+         <ul class="space-y-2 text-base">
+          <li class="flex items-center gap-2"><span class="text-2xl">💭</span> <span data-en="Think outside the box - simple ideas can change lives!" data-th="คิดนอกกรอบ - ความคิดง่ายๆ สามารถเปลี่ยนชีวิต!" data-ch="跳出框框思考——简单的想法可以改变生活！" data-ja="枠の外で考える-簡単なアイデアが人生を変えることができます！">Think outside the box - simple ideas can change lives!</span></li>
+          <li class="flex items-center gap-2"><span class="text-2xl">🎯</span> <span data-en="Solve problems that matter to people!" data-th="แก้ปัญหาที่สำคัญต่อผู้คน!" data-ch="解决对人们重要的问题！" data-ja="人々にとって重要な問題を解決する！">Solve problems that matter to people!</span></li>
+         </ul>
+        </div>
+       </div>
+      </div>
+     </section>
+    </main>
+   </div>
+  </div>
+  <script>
+    let currentLanguage = "en";
+    let currentAudio = null;
+    let appConfig = {
+      stephanie_image_url: "https://raw.githubusercontent.com/imorton-shr/Materialscientists/main/stephanie.jpg",
+      charles_image_url: "https://raw.githubusercontent.com/imorton-shr/Materialscientists/main/charles.jpg"
+    };
+
+    function playAudio(id) {
+      // Stop current audio if playing
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+      
+      // Load and play new audio from GitHub repository
+      const audioFile = `https://raw.githubusercontent.com/imorton-shr/materialscientists/main/audio/${id}-${currentLanguage}.mp3`;
+      currentAudio = new Audio(audioFile);
+      currentAudio.play().catch(() => {
+        console.log("Missing audio:", audioFile);
+      });
+    }
+
+    function stopAudio() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+    }
+
+    function updateImages() {
+      const stephanieImg = document.getElementById("stephanie-img");
+      const charlesImg = document.getElementById("charles-img");
+      const stephanieEmoji = document.getElementById("stephanie-emoji");
+      const charlesEmoji = document.getElementById("charles-emoji");
+
+      if (appConfig.stephanie_image_url) {
+        stephanieImg.src = appConfig.stephanie_image_url;
+        stephanieImg.classList.remove("hidden");
+        stephanieEmoji.classList.add("hidden");
+      } else {
+        stephanieImg.classList.add("hidden");
+        stephanieEmoji.classList.remove("hidden");
+      }
+
+      if (appConfig.charles_image_url) {
+        charlesImg.src = appConfig.charles_image_url;
+        charlesImg.classList.remove("hidden");
+        charlesEmoji.classList.add("hidden");
+      } else {
+        charlesImg.classList.add("hidden");
+        charlesEmoji.classList.remove("hidden");
+      }
+    }
+
+    function setLanguage(lang) {
+      currentLanguage = lang;
+      document.querySelectorAll(".language-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelector(`[data-lang="${lang}"]`).classList.add("active");
+      updateLanguageDisplay();
+    }
+
+    function updateLanguageDisplay() {
+      document.querySelectorAll("[data-en][data-th][data-ch][data-ja]").forEach(el => {
+        const key = `data-${currentLanguage}`;
+        if (el.hasAttribute(key)) {
+          el.textContent = el.getAttribute(key);
+        }
+      });
+    }
+
+    function toggleAnswer(card) {
+      const answer = card.querySelector(".answer-box");
+      answer.classList.toggle("open");
+    }
+
+    function goToPage(scientist) {
+      document.getElementById("home-page").classList.add("hidden");
+      if (scientist === "kwolek") {
+        document.getElementById("stephanie-page").classList.remove("hidden");
+      } else if (scientist === "macintosh") {
+        document.getElementById("charles-page").classList.remove("hidden");
+      }
+    }
+
+    function goBackHome() {
+      document.getElementById("home-page").classList.remove("hidden");
+      document.getElementById("stephanie-page").classList.add("hidden");
+      document.getElementById("charles-page").classList.add("hidden");
+      // Close all answer boxes
+      document.querySelectorAll(".answer-box").forEach(box => box.classList.remove("open"));
+    }
+
+    let flippedCards = [];
+    let matchedPairs = 0;
+
+    function flipCard(element) {
+      if (element.classList.contains("matched") || flippedCards.includes(element)) {
+        return;
+      }
+
+      element.classList.add("flipped");
+      flippedCards.push(element);
+
+      if (flippedCards.length === 2) {
+        const back1 = flippedCards[0].querySelector(".game-card-back").textContent;
+        const back2 = flippedCards[1].querySelector(".game-card-back").textContent;
+
+        if (back1 === back2) {
+          flippedCards[0].classList.add("matched");
+          flippedCards[1].classList.add("matched");
+          matchedPairs++;
+          flippedCards = [];
+
+          if (matchedPairs === 4) {
+            setTimeout(() => {
+              alert("🎉 You won! All pairs matched!");
+            }, 300);
+          }
+        } else {
+          setTimeout(() => {
+            flippedCards[0].classList.remove("flipped");
+            flippedCards[1].classList.remove("flipped");
+            flippedCards = [];
+          }, 800);
+        }
+      }
+    }
+
+    function resetGame() {
+      document.querySelectorAll(".game-card").forEach(card => {
+        card.classList.remove("flipped", "matched");
+      });
+      flippedCards = [];
+      matchedPairs = 0;
+    }
+
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig: appConfig,
+        onConfigChange: async (config) => {
+          appConfig = config;
+          updateImages();
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["stephanie_image_url", config.stephanie_image_url || ""],
+          ["charles_image_url", config.charles_image_url || ""]
+        ])
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateLanguageDisplay();
+      updateImages();
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fe9d6d1106aef74',t:'MTc3OTI2NDM1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
