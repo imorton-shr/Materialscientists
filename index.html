@@ -399,9 +399,32 @@
     }
 
     function toggleAnswer(card) {
-      const answer = card.querySelector(".answer-box");
-      answer.classList.toggle("open");
-    }
+
+  const answer = card.querySelector(".answer-box");
+
+  const isOpen = answer.classList.contains("open");
+
+  if (isOpen) {
+
+    // close answer
+    answer.classList.remove("open");
+
+    // 🔥 stop audio
+    stopAudio();
+
+  } else {
+
+    // close any existing audio first
+    stopAudio();
+
+    // open answer
+    answer.classList.add("open");
+
+    // 🔥 play audio
+    const audioId = card.dataset.audio;
+    playAudio(audioId);
+  }
+}
 
     function goToPage(scientist) {
       document.getElementById("home-page").classList.add("hidden");
