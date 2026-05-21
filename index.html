@@ -404,24 +404,22 @@
 
   const isOpen = answer.classList.contains("open");
 
+  // CLOSE
   if (isOpen) {
 
-    // close answer
     answer.classList.remove("open");
 
-    // 🔥 stop audio
     stopAudio();
 
-  } else {
+    return; // 🚨 IMPORTANT
+  }
 
-    // close any existing audio first
-    stopAudio();
+  // OPEN
+  answer.classList.add("open");
 
-    // open answer
-    answer.classList.add("open");
+  const audioId = card.dataset.audio;
 
-    // 🔥 play audio
-    const audioId = card.dataset.audio;
+  if (audioId) {
     playAudio(audioId);
   }
 }
