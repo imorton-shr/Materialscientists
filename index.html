@@ -327,7 +327,9 @@
 
    function playAudio(id) {
 
-  // fully stop previous audio first
+  // 🚨 if card is currently closing, do nothing
+  if (window.isClosingCard) return;
+
   stopAudio();
 
   const audioFile = `./${id}-${currentLanguage}.mp3`;
@@ -404,23 +406,23 @@
 
   const isOpen = answer.classList.contains("open");
 
-  // CLOSE
   if (isOpen) {
+
+    // 🚨 tell playAudio to ignore clicks briefly
+    window.isClosingCard = true;
 
     answer.classList.remove("open");
 
     stopAudio();
 
-    return; // 🚨 IMPORTANT
-  }
+    // reset after click finishes
+    setTimeout(() => {
+      window.isClosingCard = false;
+    }, 50);
 
-  // OPEN
-  answer.classList.add("open");
+  } else {
 
-  const audioId = card.dataset.audio;
-
-  if (audioId) {
-    playAudio(audioId);
+    answer.classList.add("open");
   }
 }
 
